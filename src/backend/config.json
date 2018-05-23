@@ -1,4 +1,7 @@
 {
     "port": 4100,
-    "serveStatic": true
+    "serveStatic": true,
+    "folders": {
+        "pic": "/home/maksim/Pictures/"
+    }
 }
