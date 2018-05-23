@@ -2,7 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-// const routes = require('../routes');
+const routes = require('../routes');
 const app = express();
 const mainConfig = require('../../../package.json');
 const config = require('../config.json');
@@ -59,7 +59,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
-//app.use('', routes);
+app.use('', routes);
 app.get('*', function(req, res) {
     res.sendFile(path.resolve(__dirname, '../../../public/', 'index.html'));
 });

@@ -1,27 +1,14 @@
 import client from './client';
-import queryItems from './query/items';
-import queryItem from './query/item';
-import queryItemUrls from './query/itemUrls';
+import rootQuery from './query/root';
 import mutateItem from './mutations/item';
 
-const toQueryObj = query => ({ query });
-
-export const getItems = (type, limit, offset) => {
-    return client.query({
-        query: queryItems,
-        variables: { type, limit, offset }
-    });
-};
-
-export const getItem = id =>
+const query = (q, variables = {}) =>
     client.query({
-        query: queryItem,
-        variables: { id }
+        query: q,
+        variables
     });
 
-export const getItemUrl = itemId => {
-    return itemId |> queryItemUrls |> toQueryObj |> client.query;
-};
+export const getRootFolders = () => query(rootQuery);
 
 export const saveItem = obj => {
     return client.mutate({

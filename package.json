@@ -1,10 +1,11 @@
 {
     "name": "server-photo",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Работа с фотографиями на сервере",
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server --content-base public --debug --output-pathinfo --watch-poll --hot --inline --port 4001 --mode development",
+        "start":
+            "webpack-dev-server --content-base public --debug --output-pathinfo --watch-poll --hot --inline --port 4001 --mode development",
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "NODE_ENV=development nodemon index.js",
         "dev-work": "NODE_ENV=development node index.js",
@@ -29,7 +30,10 @@
         "redux": "^4.0.0",
         "redux-form": "^7.3.0",
         "redux-thunk": "^2.2.0",
-        "@babel/polyfill": "7.0.0-beta.44"
+        "@babel/polyfill": "7.0.0-beta.44",
+        "round-to": "^3.0.0",
+        "sharp": "^0.20.2",
+        "bootstrap": "^4.1.1"
     },
     "devDependencies": {
         "@types/enzyme": "^3.1.6",

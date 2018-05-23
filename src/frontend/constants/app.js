@@ -1,3 +1,4 @@
 export default {
-    SET_TITLE: 'SET_TITLE'
+    ROOT_REQUEST: 'ROOT_REQUEST',
+    ROOT_RECEIVE: ' ROOT_RECEIVE'
 };
