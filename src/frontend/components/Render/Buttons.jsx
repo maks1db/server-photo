@@ -30,6 +30,7 @@ export default ({
                 Копировать
             </button>
         )}
+
         {type === 'edit' && (
             <button
                 type="button"
@@ -39,9 +40,18 @@ export default ({
                 Переименовать
             </button>
         )}
+        {type === 'edit' && (
+            <button
+                type="button"
+                className="btn btn-warning"
+                disabled={!haveSelected}
+            >
+                <i className="fa fa-plus" />
+            </button>
+        )}
         <button
             type="button"
-            className="btn btn-outline-secondary"
+            className="btn btn-outline-secondary btns-btn__right"
             onClick={() => onClickBack(type)}
         >
             Назад

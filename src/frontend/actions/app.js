@@ -29,9 +29,12 @@ export const getItems = (itemName, folder) => async dispatch => {
         payload: {
             itemName,
             folder,
-            items: result.data.items   
+            items: result.data.items
         }
-        
     });
 };
 
+export const goRoot = itemName => ({
+    type: appConst.GO_ROOT,
+    payload: itemName
+});

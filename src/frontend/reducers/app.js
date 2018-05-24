@@ -1,6 +1,5 @@
 import appConst from '../constants/app';
 import itemConst from '../constants/item';
-import app from '../constants/app';
 
 const R = require('ramda');
 const initialState = {
@@ -27,15 +26,31 @@ export default (state = initialState, action) => {
                     'selected',
                     x.name === action.payload.name && x.selected
                         ? false
-                        : x.selected ? true : x.name === action.payload.name,
+                        : x.selected
+                            ? true
+                            : x.name === action.payload.name,
                     x
                 )
             ) |> R.assoc(action.payload.items, R.__, state)
         );
 
     case appConst.ITEMS_RECEIVE:
-        return R.assoc(`${action.payload.itemName}Folder`, action.payload.folder, state)
-                |> R.assoc(`${action.payload.itemName}Items`, action.payload.items);
+        return (
+            R.assoc(
+                `${action.payload.itemName}Folder`,
+                action.payload.folder,
+                state
+            )
+                |> R.assoc(
+                    `${action.payload.itemName}Items`,
+                    action.payload.items
+                )
+        );
+    case appConst.GO_ROOT:
+        return (
+            R.assoc(`${action.payload}Items`, state.root, state)
+                |> R.assoc(`${action.payload}Folder`, '')
+        );
     }
 
     return state;
