@@ -1,5 +1,4 @@
 const R = require('ramda');
-const runIf = require('../../helpers/logic/runIf');
 const fs = require('fs');
 const path = require('path');
 const config = require('../config.json');
@@ -7,17 +6,12 @@ const getStats = require('../../helpers/models/getStats');
 const pathItem = require('../../helpers/models/pathItem');
 const itFolder = require('../../helpers/models/itFolder');
 const toMB = require('../../helpers/models/toMB');
-const createFolder = runIf(name => !fs.existsSync(name))(name =>
-    fs.mkdirSync(name)
-);
 
 const resolvers = {
     Query: {
         items: async (__, arg) => {
             const fromDir = pathItem(arg.folder);
 
-            const data = path.resolve(arg.folder, '.data');
-            createFolder(data);
             return fs
                 .readdirSync(arg.folder)
                 .filter(x => x !== '.data')
