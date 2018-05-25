@@ -17,7 +17,7 @@ module.exports = `
     type Mutation {
         createFolder(folder: String, name: String): Item,
         renameItem(file: String, name: String): Item,
-        copyItem(file: String, folder: String): Item,
+        copyItems(files: [String], folder: String): [Item],
     }
 
 `;
