@@ -41,6 +41,35 @@ const resolvers = {
                     accum
                 );
             }, [])
+    },
+    Mutation: {
+        createFolder: async (__, arg) => {
+            const { folder, name } = arg;
+
+            if (fs.existsSync(path.resolve(folder, arg.name))) {
+                return {};
+            }
+
+            const result = path.resolve(folder, name);
+            fs.mkdirSync(result);
+            const stats = await getStats(result);
+
+            return {
+                name,
+                path: result,
+                itFolder: itFolder(result),
+                dateCreate: stats.birthtime,
+                size: toMB(stats.size)
+            };
+        },
+        renameItem: async (__, arg) => {
+            const { file, name } = arg;
+            const itFolder = itFolder(file);
+
+            const basename = path.basename(file);
+            const type = itFolder ? '' : basename.split('.')[1];
+        },
+        copyItem: async (__, arg) => {}
     }
 };
 

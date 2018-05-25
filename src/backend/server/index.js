@@ -27,8 +27,8 @@ app.use(
     express.static(path.join(__dirname, '../../../public/sitemap.xml'))
 );
 app.use(
-    '/favicon.ico',
-    express.static(path.join(__dirname, '../../../public/favicon.ico'))
+    '/favicon.png',
+    express.static(path.join(__dirname, '../../../public/favicon.png'))
 );
 if (config.serveStatic && process.env.NODE_ENV !== 'development') {
     serveStatic();

@@ -17,7 +17,7 @@ function mapStateToProps(state) {
     return {
         viewItems: state.app.viewItems,
         editItems: state.app.editItems,
-        folder: {
+        folders: {
             view: state.app.viewFolder,
             edit: state.app.editFolder,
             root: state.app.root
@@ -44,8 +44,8 @@ export default class Main extends Component {
 
     onClickBack = name => {
         const { openFolder, goRoot } = this.props;
-        const folder = this.props.folder[name];
-        const root = this.props.folder.root;
+        const folder = this.props.folders[name];
+        const root = this.props.folders.root;
 
         const result =
             folder.split('/')
@@ -58,7 +58,13 @@ export default class Main extends Component {
     };
 
     render() {
-        const { viewItems, editItems, selectItem, openFolder } = this.props;
+        const {
+            viewItems,
+            editItems,
+            selectItem,
+            openFolder,
+            folders: { view, edit }
+        } = this.props;
 
         const params = {
             onSelectItem: selectItem,
@@ -69,10 +75,21 @@ export default class Main extends Component {
         return (
             <div className="row">
                 <div className="col-md-6">
-                    <Preview data={viewItems} type="view" {...params} />
+                    <Preview
+                        data={viewItems}
+                        type="view"
+                        {...params}
+                        rootPathActive={view === ''}
+                        editRootPathActive={edit === ''}
+                    />
                 </div>
                 <div className="col-md-6">
-                    <Preview data={editItems} type="edit" {...params} />
+                    <Preview
+                        data={editItems}
+                        type="edit"
+                        {...params}
+                        rootPathActive={edit === ''}
+                    />
                 </div>
             </div>
         );

@@ -14,4 +14,10 @@ module.exports = `
         rootFolders: [Item]
     }
 
+    type Mutation {
+        createFolder(folder: String, name: String): Item,
+        renameItem(file: String, name: String): Item,
+        copyItem(file: String, folder: String): Item,
+    }
+
 `;
