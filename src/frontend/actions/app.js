@@ -1,6 +1,12 @@
 import appConst from '../constants/app';
-
-import { getRootFolders, getItems as getItemsApi } from '../api';
+import { toastr } from 'react-redux-toastr';
+import {
+    getRootFolders,
+    getItems as getItemsApi,
+    copyItems as copyItemsApi,
+    createFolder as createFolderApi,
+    renameItem as renameItemApi
+} from '../api';
 
 export const init = () => async dispatch => {
     dispatch({
@@ -22,8 +28,6 @@ export const getItems = (itemName, folder) => async dispatch => {
 
     const result = await getItemsApi(folder);
 
-    console.log(result);
-
     dispatch({
         type: appConst.ITEMS_RECEIVE,
         payload: {
@@ -38,3 +42,39 @@ export const goRoot = itemName => ({
     type: appConst.GO_ROOT,
     payload: itemName
 });
+
+export const copyItems = (files, folder) => async dispatch => {
+    await copyItemsApi(files, folder);
+    toastr.success('Копирование', 'Копирование файлов завершено');
+    dispatch(getItems('edit', folder));
+};
+
+export const createFolder = (folder, name) => async dispatch => {
+    const result = await createFolderApi(folder, name);
+
+    if (result.name === null) {
+        toastr.error('Ошибка', 'Папка с таким именем уже существует');
+    } else {
+        toastr.error('Создание', `Новая папка "${name}" создана`);
+        dispatch({
+            type: appConst.FOLDER_CREATE,
+            payload: result
+        });
+    }
+};
+
+export const renameItem = (file, name) => async dispatch => {
+    const result = await renameItemApi(file, name);
+    if (result.name === null) {
+        toastr.error('Ошибка', 'Не удалось переименовать файл');
+    } else {
+        toastr.error('Успешно', 'Файл переименован');
+        dispatch({
+            type: appConst.FOLDER_CREATE,
+            payload: {
+                oldName: name,
+                newFile: result
+            }
+        });
+    }
+};

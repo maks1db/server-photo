@@ -6,7 +6,8 @@ import {
 } from '../actions/app';
 import { selectItem as selectItemAction } from '../actions/item';
 import React, { Component } from 'react';
-import Preview from 'components/Render/Preview.jsx';
+import Preview from 'Render/Preview.jsx';
+import Modal from 'Common/Modal.jsx';
 
 const inRoot = rootFolders => folder =>
     rootFolders.reduce((acum, x) => {
@@ -74,6 +75,7 @@ export default class Main extends Component {
 
         return (
             <div className="row">
+                <Modal show />
                 <div className="col-md-6">
                     <Preview
                         data={viewItems}
