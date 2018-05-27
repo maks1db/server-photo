@@ -1,6 +1,6 @@
 {
     "name": "server-photo",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Работа с фотографиями на сервере",
     "main": "index.js",
     "scripts": {
@@ -9,7 +9,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "NODE_ENV=development nodemon index.js",
         "dev-work": "NODE_ENV=development node index.js",
-        "migrate": "sequelize db:migrate"
+        "build": "upv && NODE_ENV=production webpack -p --mode production"
     },
     "dependencies": {
         "apollo-boost": "^0.1.6",
