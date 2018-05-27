@@ -5,14 +5,16 @@ import {
     goRoot as goRootAction,
     copyItems as copyItemsAction,
     createFolder as createFolderAction,
-    renameItem as renameItemAction
+    renameItem as renameItemAction,
+    deleteItem as deleteItemAction,
+    moveItems as moveItemsAction
 } from '../actions/app';
 import { selectItem as selectItemAction } from '../actions/item';
 import React, { Component } from 'react';
 import Preview from 'Render/Preview.jsx';
 import ModalEdit from 'Common/Modal.jsx';
 import ModalCreate from 'Common/Modal.jsx';
-import { SELECTION_SET } from 'graphql/language/kinds';
+import { toastr } from 'react-redux-toastr';
 const R = require('ramda');
 
 const inRoot = rootFolders => folder =>
@@ -40,9 +42,15 @@ function mapDispatchToProps(dispatch) {
         openFolder: (type, folder) => dispatch(getItemsAction(type, folder)),
         goRoot: type => dispatch(goRootAction(type)),
         copyItems: (files, folder) => dispatch(copyItemsAction(files, folder)),
+        moveItems: (files, folder) => dispatch(moveItemsAction(files, folder)),
         createFolder: (folder, name) =>
             dispatch(createFolderAction(folder, name)),
-        renameItem: (file, name) => dispatch(renameItemAction(file, name))
+        renameItem: (file, name, oldName) => {
+            dispatch(renameItemAction(file, name, oldName));
+        },
+        deleteItem: file => {
+            dispatch(deleteItemAction(file));
+        }
     };
 }
 
@@ -65,17 +73,36 @@ export default class Main extends Component {
         init();
     }
 
-    onCopyItems = () => {
+    onCopyItems = (move = false) => {
         const {
             viewItems,
             copyItems,
+            moveItems,
             folders: { edit }
         } = this.props;
         const selectedItems = viewItems
             .filter(x => x.selected)
             .map(x => x.path);
 
-        copyItems(selectedItems, edit);
+        move ? moveItems(selectedItems, edit) : copyItems(selectedItems, edit);
+    };
+
+    onDeleteItem = () => {
+        const { editItems, deleteItem } = this.props;
+
+        const selectedItem = editItems.reduce(
+            (accum, x) => (x.selected ? x : accum),
+            {}
+        );
+        const toastrConfirmOptions = {
+            onOk: () => deleteItem(selectedItem.path),
+            okText: 'Удалить',
+            cancelText: 'Отмена'
+        };
+        toastr.confirm(
+            `Удалить файл "${selectedItem.name}"`,
+            toastrConfirmOptions
+        );
     };
 
     onClickBack = name => {
@@ -115,7 +142,8 @@ export default class Main extends Component {
             onOpenFolder: openFolder,
             onClickBack: this.onClickBack,
             onCopyItems: this.onCopyItems,
-            openEditor: this.onChangeViewModal
+            openEditor: this.onChangeViewModal,
+            onDeleteItem: this.onDeleteItem
         };
 
         return (

@@ -10,6 +10,7 @@ export default ({
     rootPathActive,
     editRootPathActive,
     onCopyItems,
+    onDeleteItem,
     openEditor
 }) => (
     <div className="btns">
@@ -32,12 +33,23 @@ export default ({
                 type="button"
                 className="btn btn-info"
                 disabled={!haveSelected}
-                onClick={onCopyItems}
+                onClick={() => onCopyItems(false)}
             >
                     Копировать
             </button>
         )}
-
+        {type === 'view' &&
+            !rootPathActive &&
+            !editRootPathActive && (
+            <button
+                type="button"
+                className="btn btn-warning"
+                disabled={!haveSelected}
+                onClick={() => onCopyItems(true)}
+            >
+                    Переместить
+            </button>
+        )}
         {type === 'edit' &&
             !rootPathActive && (
             <button
@@ -57,6 +69,16 @@ export default ({
                 onClick={() => openEditor('createShow')}
             >
                 <i className="fa fa-plus" />
+            </button>
+        )}
+        {type === 'edit' &&
+            !rootPathActive && (
+            <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => onDeleteItem()}
+            >
+                <i className="fa fa-times" />
             </button>
         )}
         {!rootPathActive && (

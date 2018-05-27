@@ -6,7 +6,9 @@ import {
     getItems as getItemsApi,
     copyItems as copyItemsApi,
     createFolder as createFolderApi,
-    renameItem as renameItemApi
+    renameItem as renameItemApi,
+    deleteItem as deleteItemApi,
+    moveItems as moveItemsApi
 } from '../api';
 
 export const init = () => async dispatch => {
@@ -54,13 +56,33 @@ export const copyItems = (files, folder) => async dispatch => {
     });
 };
 
+export const moveItems = (files, folder) => async dispatch => {
+    await moveItemsApi(files, folder);
+    toastr.success('Перемещение', 'Перемещение файлов завершено');
+    dispatch(getItems('edit', folder));
+    dispatch({
+        type: appConst.ITEMS_MOVE,
+        payload: files
+    });
+};
+
+export const deleteItem = file => async dispatch => {
+    console.log(file);
+    await deleteItemApi(file);
+    toastr.success('Удаление', 'Файл успешно удален');
+    dispatch({
+        type: appConst.ITEM_DELETE,
+        payload: file
+    });
+};
+
 export const createFolder = (folder, name) => async dispatch => {
     const result = await createFolderApi(folder, name);
 
     if (result.name === null) {
         toastr.error('Ошибка', 'Папка с таким именем уже существует');
     } else {
-        toastr.error('Создание', `Новая папка "${name}" создана`);
+        toastr.success('Создание', `Новая папка "${name}" создана`);
         dispatch({
             type: appConst.FOLDER_CREATE,
             payload: result.data.createFolder
@@ -68,17 +90,17 @@ export const createFolder = (folder, name) => async dispatch => {
     }
 };
 
-export const renameItem = (file, name) => async dispatch => {
+export const renameItem = (file, name, oldName) => async dispatch => {
     const result = await renameItemApi(file, name);
     if (result.name === null) {
         toastr.error('Ошибка', 'Не удалось переименовать файл');
     } else {
-        toastr.error('Успешно', 'Файл переименован');
+        toastr.success('Успешно', 'Файл переименован');
         dispatch({
             type: appConst.ITEM_RENAME,
             payload: {
-                oldName: name,
-                newFile: result
+                oldName,
+                newFile: result.data.renameItem
             }
         });
     }

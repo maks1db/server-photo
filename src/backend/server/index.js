@@ -5,7 +5,7 @@ const path = require('path');
 const routes = require('../routes');
 const app = express();
 const mainConfig = require('../../../package.json');
-const config = require('../config.json');
+const config = require('./config.json');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const schema = require('../graphql-schema');
 

@@ -4,6 +4,8 @@ import itemsQuery from './query/items';
 import mutateCopyItems from './mutations/copyItems';
 import mutateCreateFolder from './mutations/createFolder';
 import mutateRenameItem from './mutations/renameItem';
+import mutateMoveItems from './mutations/moveItems';
+import mutateDeleteItem from './mutations/deleteItem';
 
 const query = (q, variables = {}) =>
     client.query({
@@ -30,3 +32,8 @@ export const createFolder = (folder, name) =>
 
 export const renameItem = (file, name) =>
     mutation(mutateRenameItem, { file, name });
+
+export const moveItems = (files, folder) =>
+    mutation(mutateMoveItems, { files, folder });
+
+export const deleteItem = file => mutation(mutateDeleteItem, { file });

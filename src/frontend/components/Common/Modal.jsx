@@ -17,7 +17,8 @@ export default class Modal extends PureComponent {
             btnName,
             onChangeView,
             modalType,
-            mainValue
+            mainValue,
+            defaultValue
         } = this.props;
         const { value } = this.state;
         return [
@@ -81,7 +82,7 @@ export default class Modal extends PureComponent {
                                 onClick={onSave}
                                 className="btn btn-primary"
                                 onClick={() => {
-                                    onSave(mainValue, value);
+                                    onSave(mainValue, value, defaultValue);
                                     onChangeView(modalType + 'Show', false);
                                 }}
                             >

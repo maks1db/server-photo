@@ -19,32 +19,16 @@ export default class Preview extends PureComponent {
     }
 
     render() {
-        const {
-            data,
-            onSelectItem,
-            type,
-            onOpenFolder,
-            onClickBack,
-            rootPathActive,
-            editRootPathActive,
-            onCopyItems,
-            openEditor
-        } = this.props;
+        const { data, onSelectItem, type } = this.props;
 
         return [
             <Buttons
-                type={type}
                 haveSelected={data.filter(x => x.selected).length > 0}
                 selectedItem={data.reduce(
                     (accum, x) => (x.selected ? x : accum),
                     {}
                 )}
-                onOpenFolder={onOpenFolder}
-                onClickBack={onClickBack}
-                rootPathActive={rootPathActive}
-                editRootPathActive={editRootPathActive}
-                onCopyItems={onCopyItems}
-                openEditor={openEditor}
+                {...this.props}
             />,
             <div className="preview" ref={e => (this.item = e)}>
                 <div className="row">

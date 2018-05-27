@@ -61,12 +61,42 @@ export default (state = initialState, action) => {
             state
         );
     case appConst.FOLDER_CREATE:
-        return R.assoc(
-            'editItems',
-            R.append(action.payload, state.editItems)
-                    |> (_ => _.sort(sortBy('-itFolder', 'name'))),
-            state
+        return (
+            R.assoc(
+                'editItems',
+                R.append(action.payload, state.editItems),
+                state
+            ) |> (_ => _.sort(sortBy('-itFolder', 'name')))
         );
+    case appConst.ITEMS_MOVE:
+        return {
+            ...state,
+            viewItems: state.viewItems.filter(
+                x => action.payload.find(x.path) === undefined
+            )
+        };
+    case appConst.ITEM_DELETE:
+        return {
+            ...state,
+            editItems: state.viewItems.filter(
+                x => x.path !== action.payload
+            )
+        };
+    case appConst.ITEM_RENAME:
+        return {
+            ...state,
+            editItems:
+                    state.editItems.map(
+                        x =>
+                            x.name === action.payload.oldName
+                                ? R.assoc(
+                                    'selected',
+                                    true,
+                                    action.payload.newFile
+                                )
+                                : x
+                    ) |> (_ => _.sort(sortBy('-itFolder', 'name')))
+        };
     }
 
     return state;

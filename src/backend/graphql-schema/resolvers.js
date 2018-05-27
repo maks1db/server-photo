@@ -1,14 +1,14 @@
 const R = require('ramda');
 const fs = require('fs');
 const path = require('path');
-const config = require('../config.json');
+const config = require('../config');
 const getStats = require('../../helpers/models/getStats');
 const pathItem = require('../../helpers/models/pathItem');
 const itFolder = require('../../helpers/models/itFolder');
 const itIMG = require('../../helpers/models/itIMG');
 const toMB = require('../../helpers/models/toMB');
 const copyItem = require('../../helpers/models/copyItem');
-const sortBy = require('sort-by');
+const sort = require('sort-by');
 
 const resolvers = {
     Query: {
@@ -18,9 +18,9 @@ const resolvers = {
             return fs
                 .readdirSync(arg.folder)
                 .filter(x => R.pipe(fromDir, _ => itIMG(_) || itFolder(_))(x))
-                .map(async x => {
+                .map(x => {
                     const path = fromDir(x);
-                    const stats = await getStats(path);
+                    const stats = getStats(path);
                     return {
                         name: x,
                         path,
@@ -28,11 +28,12 @@ const resolvers = {
                         dateCreate: stats.birthtime,
                         size: toMB(stats.size)
                     };
-                });
+                })
+                .sort(sort('-itFolder', 'name'));
         },
         rootFolders: async () =>
-            Object.keys(config.folders).reduce(async (accum, key) => {
-                const stats = await getStats(config.folders[key]);
+            Object.keys(config.folders).reduce((accum, key) => {
+                const stats = getStats(config.folders[key]);
                 return R.append(
                     {
                         name: key,
@@ -55,7 +56,7 @@ const resolvers = {
 
             const result = path.resolve(folder, name);
             fs.mkdirSync(result);
-            const stats = await getStats(result);
+            const stats = getStats(result);
 
             return {
                 name,
@@ -78,11 +79,11 @@ const resolvers = {
             }
 
             fs.renameSync(file, newFile);
-            const stats = await getStats(newFile);
+            const stats = getStats(newFile);
             return {
                 name: name + type,
                 path: newFile,
-                itFolder: false,
+                itFolder: itFolder(newFile),
                 dateCreate: stats.birthtime,
                 size: toMB(stats.size)
             };
@@ -103,7 +104,7 @@ const resolvers = {
                 copyItem(file, path.resolve(folder, newFile));
 
                 const result = path.resolve(folder, newFile);
-                const stats = await getStats(result);
+                const stats = getStats(result);
 
                 return {
                     name: path.basename(result),
@@ -113,6 +114,42 @@ const resolvers = {
                     size: toMB(stats.size)
                 };
             });
+        },
+        moveItems: async (__, arg) => {
+            const { files, folder } = arg;
+
+            const result = files.map(async file => {
+                const basename = path.basename(file);
+                const type = path.extname(file);
+
+                const exists = fs.existsSync(path.resolve(folder, basename));
+                const newFile = exists
+                    ? basename.replace(type, '') +
+                      `_${new Date().valueOf()}${type}`
+                    : basename;
+
+                copyItem(file, path.resolve(folder, newFile));
+
+                const result = path.resolve(folder, newFile);
+                const stats = getStats(result);
+
+                return {
+                    name: path.basename(result),
+                    path: result,
+                    itFolder: itFolder(result),
+                    dateCreate: stats.birthtime,
+                    size: toMB(stats.size)
+                };
+            });
+
+            files.forEach(x => fs.unlinkSync(x.path));
+            return result;
+        },
+        deleteItem: async (__, arg) => {
+            const { file } = arg;
+            fs.unlinkSync(file);
+
+            return 'ok';
         }
     }
 };
