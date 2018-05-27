@@ -75,7 +75,7 @@ export default class Main extends Component {
 
         return (
             <div className="row">
-                <Modal show />
+                {/* <Modal show /> */}
                 <div className="col-md-6">
                     <Preview
                         data={viewItems}
