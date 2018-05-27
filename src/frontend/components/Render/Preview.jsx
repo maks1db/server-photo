@@ -6,7 +6,7 @@ import './preview.scss';
 export default class Preview extends PureComponent {
     onResize = () => {
         const height = window.innerHeight;
-        this.item.style.height = `${height - 40}px`;
+        this.item.style.height = `${height - 60}px`;
     };
 
     componentDidMount() {
@@ -26,7 +26,9 @@ export default class Preview extends PureComponent {
             onOpenFolder,
             onClickBack,
             rootPathActive,
-            editRootPathActive
+            editRootPathActive,
+            onCopyItems,
+            openEditor
         } = this.props;
 
         return [
@@ -41,6 +43,8 @@ export default class Preview extends PureComponent {
                 onClickBack={onClickBack}
                 rootPathActive={rootPathActive}
                 editRootPathActive={editRootPathActive}
+                onCopyItems={onCopyItems}
+                openEditor={openEditor}
             />,
             <div className="preview" ref={e => (this.item = e)}>
                 <div className="row">

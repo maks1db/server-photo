@@ -5,8 +5,10 @@ const config = require('../config.json');
 const getStats = require('../../helpers/models/getStats');
 const pathItem = require('../../helpers/models/pathItem');
 const itFolder = require('../../helpers/models/itFolder');
+const itIMG = require('../../helpers/models/itIMG');
 const toMB = require('../../helpers/models/toMB');
 const copyItem = require('../../helpers/models/copyItem');
+const sortBy = require('sort-by');
 
 const resolvers = {
     Query: {
@@ -15,7 +17,7 @@ const resolvers = {
 
             return fs
                 .readdirSync(arg.folder)
-                .filter(x => x !== '.data')
+                .filter(x => R.pipe(fromDir, _ => itIMG(_) || itFolder(_))(x))
                 .map(async x => {
                     const path = fromDir(x);
                     const stats = await getStats(path);

@@ -1,26 +1,34 @@
 import React, { PureComponent } from 'react';
-import classname from 'helpers/components/classname';
 
 export default class Modal extends PureComponent {
-    constructor() {
+    constructor(props) {
         super();
         this.state = {
-            value: ''
+            value: props.defaultValue || ''
         };
     }
 
     handleChange = e => this.setState({ value: e.target.value });
 
     render() {
-        const { show } = this.props;
+        const {
+            title,
+            onSave,
+            btnName,
+            onChangeView,
+            modalType,
+            mainValue
+        } = this.props;
+        const { value } = this.state;
         return [
             <div
-                {...classname({ show: show }, 'modal fade')}
+                key="form"
+                className="modal fade show"
                 tabIndex="-1"
                 role="dialog"
                 aria-labelledby="exampleModalCenterTitle"
                 aria-hidden="true"
-                {...show && { style: { display: 'block' } }}
+                {...{ style: { display: 'block' } }}
             >
                 <div
                     className="modal-dialog modal-dialog-centered"
@@ -32,24 +40,28 @@ export default class Modal extends PureComponent {
                                 className="modal-title"
                                 id="exampleModalLongTitle"
                             >
-                                Modal title
+                                {title}
                             </h5>
                             <button
                                 type="button"
                                 className="close"
                                 data-dismiss="modal"
                                 aria-label="Close"
+                                onClick={() =>
+                                    onChangeView(modalType + 'Show', false)
+                                }
                             >
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div className="modal-body">
                             <div className="form-group">
-                                <label>Значение</label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder="Введите значение"
+                                    placeholder="Введите значение..."
+                                    value={value}
+                                    onChange={this.handleChange}
                                 />
                             </div>
                         </div>
@@ -58,17 +70,28 @@ export default class Modal extends PureComponent {
                                 type="button"
                                 className="btn btn-secondary"
                                 data-dismiss="modal"
+                                onClick={() =>
+                                    onChangeView(modalType + 'Show', false)
+                                }
                             >
                                 Закрыть
                             </button>
-                            <button type="button" className="btn btn-primary">
-                                Save changes
+                            <button
+                                type="button"
+                                onClick={onSave}
+                                className="btn btn-primary"
+                                onClick={() => {
+                                    onSave(mainValue, value);
+                                    onChangeView(modalType + 'Show', false);
+                                }}
+                            >
+                                {btnName}
                             </button>
                         </div>
                     </div>
                 </div>
             </div>,
-            <div {...classname({ show: show }, 'modal-backdrop fade')} />
+            <div key="overlay" className="modal-backdrop fade show" />
         ];
     }
 }

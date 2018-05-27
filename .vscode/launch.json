@@ -26,7 +26,10 @@
             "type": "node",
             "request": "launch",
             "name": "Запустить программу",
-            "program": "${workspaceFolder}/index.js"
+            "program": "${workspaceFolder}/index.js",
+            "env": {
+                "NODE_ENV": "development"
+            }
         }
     ]
 }

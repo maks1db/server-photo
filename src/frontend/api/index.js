@@ -8,13 +8,15 @@ import mutateRenameItem from './mutations/renameItem';
 const query = (q, variables = {}) =>
     client.query({
         query: q,
-        variables
+        variables,
+        fetchPolicy: 'no-cache'
     });
 
 const mutation = (m, variables = {}) =>
     client.mutate({
         mutation: m,
-        variables
+        variables,
+        fetchPolicy: 'no-cache'
     });
 
 export const getRootFolders = () => query(rootQuery);

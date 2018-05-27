@@ -8,7 +8,10 @@ const img = {
     file: '/assets/images/file.png'
 };
 
-const itemSrc = path => `${process.env.BROWSER ? 'http://localhost:4100' : ''}/img/file?path=${path}&src=small`;
+const itemSrc = path =>
+    `${
+        process.env.DEV ? 'http://localhost:4100' : ''
+    }/img/file?path=${path}&src=small`;
 
 export default class Item extends PureComponent {
     constructor() {
@@ -32,7 +35,9 @@ export default class Item extends PureComponent {
         const showNativeItem = !itFolder && !imgLoad;
         return (
             <div className="item col-md-3" onClick={this.handleClick}>
-                {showNativeItem && <img className={'item-img'} src={img.file} />}
+                {showNativeItem && (
+                    <img className={'item-img'} src={img.file} />
+                )}
                 <img
                     src={itFolder ? img.folder : itemSrc(path)}
                     {...classname(

@@ -1,5 +1,6 @@
 import appConst from '../constants/app';
 import itemConst from '../constants/item';
+import sortBy from 'sort-by';
 
 const R = require('ramda');
 const initialState = {
@@ -50,6 +51,21 @@ export default (state = initialState, action) => {
         return (
             R.assoc(`${action.payload}Items`, state.root, state)
                 |> R.assoc(`${action.payload}Folder`, '')
+        );
+    case itemConst.DISABLE_SELECT:
+        return R.assoc(
+            `${action.payload}Items`,
+            state[`${action.payload}Items`].map(x =>
+                R.assoc('selected', false, x)
+            ),
+            state
+        );
+    case appConst.FOLDER_CREATE:
+        return R.assoc(
+            'editItems',
+            R.append(action.payload, state.editItems)
+                    |> (_ => _.sort(sortBy('-itFolder', 'name'))),
+            state
         );
     }
 

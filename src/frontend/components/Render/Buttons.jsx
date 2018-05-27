@@ -8,7 +8,9 @@ export default ({
     selectedItem,
     onClickBack,
     rootPathActive,
-    editRootPathActive
+    editRootPathActive,
+    onCopyItems,
+    openEditor
 }) => (
     <div className="btns">
         <button
@@ -30,6 +32,7 @@ export default ({
                 type="button"
                 className="btn btn-info"
                 disabled={!haveSelected}
+                onClick={onCopyItems}
             >
                     Копировать
             </button>
@@ -41,13 +44,18 @@ export default ({
                 type="button"
                 className="btn btn-warning"
                 disabled={!haveSelected}
+                onClick={() => openEditor('editShow')}
             >
                     Переименовать
             </button>
         )}
         {type === 'edit' &&
             !rootPathActive && (
-            <button type="button" className="btn btn-warning">
+            <button
+                type="button"
+                className="btn btn-warning"
+                onClick={() => openEditor('createShow')}
+            >
                 <i className="fa fa-plus" />
             </button>
         )}

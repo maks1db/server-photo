@@ -1,4 +1,5 @@
 import appConst from '../constants/app';
+import itemConst from '../constants/item';
 import { toastr } from 'react-redux-toastr';
 import {
     getRootFolders,
@@ -47,6 +48,10 @@ export const copyItems = (files, folder) => async dispatch => {
     await copyItemsApi(files, folder);
     toastr.success('Копирование', 'Копирование файлов завершено');
     dispatch(getItems('edit', folder));
+    dispatch({
+        type: itemConst.DISABLE_SELECT,
+        payload: 'view'
+    });
 };
 
 export const createFolder = (folder, name) => async dispatch => {
@@ -58,7 +63,7 @@ export const createFolder = (folder, name) => async dispatch => {
         toastr.error('Создание', `Новая папка "${name}" создана`);
         dispatch({
             type: appConst.FOLDER_CREATE,
-            payload: result
+            payload: result.data.createFolder
         });
     }
 };
@@ -70,7 +75,7 @@ export const renameItem = (file, name) => async dispatch => {
     } else {
         toastr.error('Успешно', 'Файл переименован');
         dispatch({
-            type: appConst.FOLDER_CREATE,
+            type: appConst.ITEM_RENAME,
             payload: {
                 oldName: name,
                 newFile: result
