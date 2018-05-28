@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-    query items($folder: String) {
-        items(folder: $folder) {
+    mutation deleteItem($file: String) {
+        deleteItem(file: $file) {
             name
             path
             dateCreate

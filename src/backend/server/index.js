@@ -2,11 +2,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-// const routes = require('../routes');
+const routes = require('../routes');
 const app = express();
 const mainConfig = require('../../../package.json');
-const config = require('../config.json');
-const db = require('../models');
+const config = require('./config.json');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const schema = require('../graphql-schema');
 
@@ -28,8 +27,8 @@ app.use(
     express.static(path.join(__dirname, '../../../public/sitemap.xml'))
 );
 app.use(
-    '/favicon.ico',
-    express.static(path.join(__dirname, '../../../public/favicon.ico'))
+    '/favicon.png',
+    express.static(path.join(__dirname, '../../../public/favicon.png'))
 );
 if (config.serveStatic && process.env.NODE_ENV !== 'development') {
     serveStatic();
@@ -50,7 +49,7 @@ if (process.env.NODE_ENV === 'development') {
         );
 
         if (req.method === 'OPTIONS') {
-            return res.send(200);
+            return res.sendStatus(200);
         } else {
             return next();
         }
@@ -60,7 +59,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
-//app.use('', routes);
+app.use('', routes);
 app.get('*', function(req, res) {
     res.sendFile(path.resolve(__dirname, '../../../public/', 'index.html'));
 });

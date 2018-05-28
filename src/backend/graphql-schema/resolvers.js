@@ -1,116 +1,158 @@
-const models = require('../models');
-const update = require('../../helpers/models/update');
-const updateOrderNumber = require('./updateOrderNumber');
 const R = require('ramda');
-const runIf = require('../../helpers/logic/runIf');
-const Op = require('sequelize').Op;
+const fs = require('fs-extra');
+const path = require('path');
+const config = require('../config');
+const getStats = require('../../helpers/models/getStats');
+const pathItem = require('../../helpers/models/pathItem');
+const itFolder = require('../../helpers/models/itFolder');
+const itIMG = require('../../helpers/models/itIMG');
+const toMB = require('../../helpers/models/toMB');
+const copyItem = require('../../helpers/models/copyItem');
+const sort = require('sort-by');
 
 const resolvers = {
-    Item: {
-        priceList: async arg => {
-            const price = await models.itemPrice.findAll({
-                include: [{ model: models.itemUrl }],
-                where: {
-                    itemId: arg.id,
-                    price: {
-                        $gt: 0
-                    }
-                },
-                order: [['date', 'DESC']],
-                limit: 50
-            });
-
-            return price.reduce(
-                (accum, item) =>
-                    accum.find(x => x.itemUrl.domain === item.itemUrl.domain)
-                        ? accum
-                        : R.append(item, accum),
-                []
-            );
-        },
-        minPrice: async arg => {
-            const date = new Date();
-            const price = await models.itemPrice.findAll({
-                include: [{ model: models.itemUrl }],
-                where: {
-                    itemId: arg.id,
-                    price: {
-                        $gt: 0
-                    },
-                    date: {
-                        //2 mounths
-                        [Op.between]: [
-                            date - 2 * 32 * 24 * 60 * 60 * 1000,
-                            date
-                        ]
-                    }
-                },
-                order: [['price']]
-            });
-
-            return price.reduce((accum, item) => {
-                const result =
-                    accum.length === 5 ||
-                    accum.find(x => x.price === item.price)
-                        ? accum
-                        : R.append(item, accum);
-                return result;
-            }, []);
-        },
-        urlList: async arg => {
-            return await models.itemUrl.findAll({
-                where: { itemId: arg.id },
-                order: [['itMain', 'DESC']]
-            });
-        }
-    },
-    Price: {
-        itemUrl: async ({ itemUrlId }) =>
-            await models.itemUrl.find({
-                where: { id: itemUrlId }
-            })
-    },
     Query: {
-        items: async (__, arg) =>
-            await models.item.findAll(
-                R.pipe(
-                    runIf(arg.limit !== undefined)(o =>
-                        R.assoc('limit', arg.limit, o)
-                    ),
-                    runIf(arg.offset !== undefined)(o =>
-                        R.assoc('offset', arg.offset, o)
-                    )
-                )({
-                    where: R.pipe(R.dissoc('limit'), R.dissoc('offset', R.__))(
-                        arg
-                    ),
-                    order: ['orderNumber']
+        items: async (__, arg) => {
+            const fromDir = pathItem(arg.folder);
+
+            return fs
+                .readdirSync(arg.folder)
+                .filter(x => R.pipe(fromDir, _ => itIMG(_) || itFolder(_))(x))
+                .map(x => {
+                    const path = fromDir(x);
+                    const stats = getStats(path);
+                    return {
+                        name: x,
+                        path,
+                        itFolder: itFolder(path),
+                        dateCreate: stats.birthtime,
+                        size: toMB(stats.size)
+                    };
                 })
-            ),
-        itemPrices: async (__, arg) =>
-            await models.itemPrice.findAll({
-                where: arg,
-                order: [['date', 'DESC']]
-            }),
-        itemUrls: async (__, arg) =>
-            await models.itemUrklfindAll({
-                where: arg,
-                order: [['itMain', 'DESC']]
-            }),
-        item: async (__, arg) =>
-            await models.item.find({
-                where: arg
-            })
+                .sort(sort('-itFolder', 'name'));
+        },
+        rootFolders: async () =>
+            Object.keys(config.folders).reduce((accum, key) => {
+                const stats = getStats(config.folders[key]);
+                return R.append(
+                    {
+                        name: key,
+                        path: config.folders[key],
+                        itFolder: true,
+                        dateCreate: stats.birthtime,
+                        size: toMB(stats.size)
+                    },
+                    accum
+                );
+            }, [])
     },
     Mutation: {
-        item: async (__, arg) => {
-            const result = await update(models.item, arg);
-            arg.id && (await updateOrderNumber(result));
+        createFolder: async (__, arg) => {
+            const { folder, name } = arg;
 
+            if (fs.existsSync(path.resolve(folder, arg.name))) {
+                return {};
+            }
+
+            const result = path.resolve(folder, name);
+            fs.mkdirSync(result);
+            const stats = getStats(result);
+
+            return {
+                name,
+                path: result,
+                itFolder: true,
+                dateCreate: stats.birthtime,
+                size: toMB(stats.size)
+            };
+        },
+        renameItem: async (__, arg) => {
+            const { file, name } = arg;
+
+            const basename = path.basename(file);
+            const type = path.extname(file);
+            const folder = file.replace(basename, '');
+
+            const newFile = path.resolve(folder, name + type);
+            if (fs.existsSync(newFile)) {
+                return {};
+            }
+
+            fs.renameSync(file, newFile);
+            const stats = getStats(newFile);
+            return {
+                name: name + type,
+                path: newFile,
+                itFolder: itFolder(newFile),
+                dateCreate: stats.birthtime,
+                size: toMB(stats.size)
+            };
+        },
+        copyItems: async (__, arg) => {
+            const { files, folder } = arg;
+
+            return files.map(async file => {
+                const basename = path.basename(file);
+                const type = path.extname(file);
+
+                const exists = fs.existsSync(path.resolve(folder, basename));
+                const newFile = exists
+                    ? basename.replace(type, '') +
+                      `_${new Date().valueOf()}${type}`
+                    : basename;
+
+                copyItem(file, path.resolve(folder, newFile));
+
+                const result = path.resolve(folder, newFile);
+                const stats = getStats(result);
+
+                return {
+                    name: path.basename(result),
+                    path: result,
+                    itFolder: itFolder(result),
+                    dateCreate: stats.birthtime,
+                    size: toMB(stats.size)
+                };
+            });
+        },
+        moveItems: async (__, arg) => {
+            const { files, folder } = arg;
+
+            const result = files.map(async file => {
+                const basename = path.basename(file);
+                const type = path.extname(file);
+
+                const exists = fs.existsSync(path.resolve(folder, basename));
+                const newFile = exists
+                    ? basename.replace(type, '') +
+                      `_${new Date().valueOf()}${type}`
+                    : basename;
+
+                copyItem(file, path.resolve(folder, newFile));
+
+                const result = path.resolve(folder, newFile);
+                const stats = getStats(result);
+
+                return {
+                    name: path.basename(result),
+                    path: result,
+                    itFolder: itFolder(result),
+                    dateCreate: stats.birthtime,
+                    size: toMB(stats.size)
+                };
+            });
+
+            files.forEach(async x => {
+                await fs.remove(x);
+            });
             return result;
         },
-        itemPrice: async (__, arg) => await update(models.itemPrice, arg),
-        itemUrl: async (__, arg) => await update(models.itemUrl, arg)
+        deleteItem: async (__, arg) => {
+            const { file } = arg;
+            await fs.remove(file);
+
+            return 'ok';
+        }
     }
 };
 

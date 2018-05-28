@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-    query items($folder: String) {
-        items(folder: $folder) {
+    mutation copyItems($files: [String], $folder: String) {
+        copyItems(files: $files, folder: $folder) {
             name
             path
             dateCreate

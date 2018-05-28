@@ -1,0 +1,22 @@
+.item {
+  width: 100%;
+  cursor: pointer;
+}
+.item-img {
+  width: 80px;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+}
+.item-img__hidden{
+  position: absolute;
+  z-index: -1;
+}
+.item-name {
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+}
+.item-name__bold {
+  font-weight: bold;
+}

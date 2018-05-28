@@ -2,70 +2,24 @@ module.exports = `
 
     scalar Date
     type Item { 
-        id: Int,
-        title: String, 
-        img: String,
-        itemType: String,
-        orderNumber: Int,
-        owner: String,
-        description: String,
-        myPrice: Int,
-        myPriceHot: Int,
-        active: Boolean,
-        priceList: [Price],
-        urlList: [Url],
-        minPrice: [Price] 
-    }
-
-    type Price {
-        id: Int,
-        date: Date,
-        price: Float,
-        itemId: Int,
-        itemUrl: Url    
-    }
-
-    type Url {
-        id: Int,
-        itMain: Boolean,
-        url: String,
-        itemId: Int,
-        domain: String,
-        discount: Int   
+        name: String,
+        path: String,
+        dateCreate: Date,
+        size: Float,
+        itFolder: Boolean
     }
 
     type Query {
-        items (itemType: String, limit: Int, offset: Int, id: Int): [Item]
-        item (id: Int): Item
-        itemPrices (itemId: Int, date: Date, price: Float): [Price]
-        itemUrls (itemId: Int): [Url]
+        items (folder: String): [Item],
+        rootFolders: [Item]
     }
+
     type Mutation {
-        item (
-            id: Int,
-            title: String, 
-            img: String,
-            itemType: String,
-            orderNumber: Int,
-            owner: String,
-            description: String,
-            myPrice: Int,
-            myPriceHot: Int,
-            active: Boolean 
-        ): Item
-        itemPrice (
-            id: Int,
-            date: Date,
-            price: Float,
-            itemId: Int,
-            itemUrlId: Int
-        ): Price,
-        itemUrl (
-            id: Int,
-            itMain: Boolean,
-            url: String,
-            itemId: Int,
-            discount: Int
-        ): Url
+        createFolder(folder: String, name: String): Item,
+        renameItem(file: String, name: String): Item,
+        copyItems(files: [String], folder: String): [Item],
+        moveItems(files: [String], folder: String): [Item],
+        deleteItem(file: String): Item,
     }
+
 `;
