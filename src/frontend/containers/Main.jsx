@@ -178,6 +178,7 @@ export default class Main extends Component {
                         {...params}
                         rootPathActive={view === ''}
                         editRootPathActive={edit === ''}
+                        folder={view}
                     />
                 </div>
                 <div className="col-md-6">
@@ -186,6 +187,7 @@ export default class Main extends Component {
                         type="edit"
                         {...params}
                         rootPathActive={edit === ''}
+                        folder={edit}
                     />
                 </div>
             </div>

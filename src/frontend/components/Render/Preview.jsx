@@ -3,10 +3,15 @@ import Item from './Item.jsx';
 import Buttons from './Buttons.jsx';
 import './preview.scss';
 
+const folderPreview = folder =>
+    folder === ''
+        ? '""'
+        : folder.split('/').reduce((accum, x) => (x !== '' ? x : accum), '');
+
 export default class Preview extends PureComponent {
     onResize = () => {
         const height = window.innerHeight;
-        this.item.style.height = `${height - 60}px`;
+        this.item.style.height = `${height - 100}px`;
     };
 
     componentDidMount() {
@@ -19,10 +24,11 @@ export default class Preview extends PureComponent {
     }
 
     render() {
-        const { data, onSelectItem, type } = this.props;
+        const { data, onSelectItem, type, folder = '' } = this.props;
 
         return [
             <Buttons
+                key="buttons"
                 haveSelected={data.filter(x => x.selected).length > 0}
                 selectedItem={data.reduce(
                     (accum, x) => (x.selected ? x : accum),
@@ -30,7 +36,8 @@ export default class Preview extends PureComponent {
                 )}
                 {...this.props}
             />,
-            <div className="preview" ref={e => (this.item = e)}>
+            <div className="preview" ref={e => (this.item = e)} key="preview">
+                <h5 className="preview-folder">{folderPreview(folder)}</h5>
                 <div className="row">
                     {data.map(x => (
                         <Item

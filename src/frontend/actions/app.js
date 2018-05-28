@@ -59,6 +59,7 @@ export const copyItems = (files, folder) => async dispatch => {
 export const moveItems = (files, folder) => async dispatch => {
     await moveItemsApi(files, folder);
     toastr.success('Перемещение', 'Перемещение файлов завершено');
+
     dispatch(getItems('edit', folder));
     dispatch({
         type: appConst.ITEMS_MOVE,
@@ -67,7 +68,6 @@ export const moveItems = (files, folder) => async dispatch => {
 };
 
 export const deleteItem = file => async dispatch => {
-    console.log(file);
     await deleteItemApi(file);
     toastr.success('Удаление', 'Файл успешно удален');
     dispatch({

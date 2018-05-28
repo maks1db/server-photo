@@ -19,7 +19,7 @@ class App extends React.Component {
                     timeOut={4000}
                     newestOnTop={false}
                     preventDuplicates
-                    position="top-right"
+                    position="top-left"
                     transitionIn="fadeIn"
                     transitionOut="fadeOut"
                     progressBar

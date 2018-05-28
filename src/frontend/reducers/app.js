@@ -61,24 +61,23 @@ export default (state = initialState, action) => {
             state
         );
     case appConst.FOLDER_CREATE:
-        return (
-            R.assoc(
-                'editItems',
-                R.append(action.payload, state.editItems),
-                state
-            ) |> (_ => _.sort(sortBy('-itFolder', 'name')))
+        return R.assoc(
+            'editItems',
+            R.append(action.payload, state.editItems)
+                    |> (_ => _.sort(sortBy('-itFolder', 'name'))),
+            state
         );
     case appConst.ITEMS_MOVE:
         return {
             ...state,
             viewItems: state.viewItems.filter(
-                x => action.payload.find(x.path) === undefined
+                x => action.payload.find(p => p === x.path) === undefined
             )
         };
     case appConst.ITEM_DELETE:
         return {
             ...state,
-            editItems: state.viewItems.filter(
+            editItems: state.editItems.filter(
                 x => x.path !== action.payload
             )
         };
@@ -88,7 +87,7 @@ export default (state = initialState, action) => {
             editItems:
                     state.editItems.map(
                         x =>
-                            x.name === action.payload.oldName
+                            x.name.split('.')[0] === action.payload.oldName
                                 ? R.assoc(
                                     'selected',
                                     true,

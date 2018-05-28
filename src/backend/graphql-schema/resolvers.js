@@ -1,5 +1,5 @@
 const R = require('ramda');
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const config = require('../config');
 const getStats = require('../../helpers/models/getStats');
@@ -142,12 +142,14 @@ const resolvers = {
                 };
             });
 
-            files.forEach(x => fs.unlinkSync(x.path));
+            files.forEach(async x => {
+                await fs.remove(x);
+            });
             return result;
         },
         deleteItem: async (__, arg) => {
             const { file } = arg;
-            fs.unlinkSync(file);
+            await fs.remove(file);
 
             return 'ok';
         }

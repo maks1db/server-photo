@@ -66,6 +66,7 @@ export default ({
             <button
                 type="button"
                 className="btn btn-warning"
+                disabled={!haveSelected}
                 onClick={() => openEditor('createShow')}
             >
                 <i className="fa fa-plus" />
@@ -76,6 +77,7 @@ export default ({
             <button
                 type="button"
                 className="btn btn-danger"
+                disabled={!haveSelected}
                 onClick={() => onDeleteItem()}
             >
                 <i className="fa fa-times" />
