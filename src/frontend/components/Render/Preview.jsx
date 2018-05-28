@@ -24,7 +24,7 @@ export default class Preview extends PureComponent {
     }
 
     render() {
-        const { data, onSelectItem, type, folder = '' } = this.props;
+        const { data, onSelectItem, previewName, folder = '' } = this.props;
 
         return [
             <Buttons
@@ -44,7 +44,7 @@ export default class Preview extends PureComponent {
                             key={x.name}
                             {...x}
                             onSelectItem={onSelectItem}
-                            type={type}
+                            previewName={previewName}
                         />
                     ))}
                 </div>

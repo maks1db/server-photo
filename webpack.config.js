@@ -56,6 +56,11 @@ const plugins = [
             DEV: isDevelopment
         }
     }),
+    new webpack.ProvidePlugin({
+        $: 'jquery/dist/jquery.min.js',
+        jQuery: 'jquery/dist/jquery.min.js',
+        'window.jQuery': 'jquery/dist/jquery.min.js'
+    }),
     !isDevelopment &&
         new ExtractTextPlugin('/css/styles.min.v.' + version + '.css'),
     isDevelopment && new webpack.NamedModulesPlugin(),

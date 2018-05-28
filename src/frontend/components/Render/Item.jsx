@@ -1,6 +1,7 @@
 /*global process */
 import React, { PureComponent } from 'react';
 import classname from 'helpers/components/classname';
+import format from 'date-format';
 import './item.scss';
 
 const img = {
@@ -8,10 +9,10 @@ const img = {
     file: '/assets/images/file.png'
 };
 
-const itemSrc = path =>
+export const itemSrc = (path, src = 'small') =>
     `${
         process.env.DEV ? 'http://localhost:4100' : ''
-    }/img/file?path=${path}&src=small`;
+    }/img/file?path=${path}&src=${src}`;
 
 export default class Item extends PureComponent {
     constructor() {
@@ -24,21 +25,30 @@ export default class Item extends PureComponent {
     handleLoad = () => this.setState({ imgLoad: true });
 
     handleClick = () => {
-        const { name, type, onSelectItem } = this.props;
-        onSelectItem(type, name);
+        const { name, previewName, onSelectItem } = this.props;
+        onSelectItem(previewName, name);
     };
 
     render() {
-        const { itFolder, name, selected, path } = this.props;
+        const { itFolder, name, selected, path, dateCreate } = this.props;
         const { imgLoad } = this.state;
 
         const showNativeItem = !itFolder && !imgLoad;
         return (
-            <div className="item col-md-3" onClick={this.handleClick}>
+            <div
+                className="item col-md-3"
+                onClick={this.handleClick}
+                title={`Дата создания: ${format(
+                    'dd.MM.yyyy',
+                    new Date(dateCreate)
+                )}`}
+            >
                 {showNativeItem && (
                     <img className={'item-img'} src={img.file} />
                 )}
+
                 <img
+                    data-tip="hello world"
                     src={itFolder ? img.folder : itemSrc(path)}
                     {...classname(
                         { 'item-img__hidden': itFolder ? false : !imgLoad },
@@ -46,6 +56,7 @@ export default class Item extends PureComponent {
                     )}
                     onLoad={this.handleLoad}
                 />
+
                 <label
                     {...classname(
                         { ['item-name__bold']: selected },

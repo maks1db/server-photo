@@ -15,6 +15,8 @@ import Preview from 'Render/Preview.jsx';
 import ModalEdit from 'Common/Modal.jsx';
 import ModalCreate from 'Common/Modal.jsx';
 import { toastr } from 'react-redux-toastr';
+import ImgView from 'Common/ImgView.jsx';
+import { itemSrc } from 'Render/Item.jsx';
 const R = require('ramda');
 
 const inRoot = rootFolders => folder =>
@@ -60,9 +62,24 @@ export default class Main extends Component {
         super();
         this.state = {
             editShow: false,
-            createShow: false
+            createShow: false,
+            imgView: {
+                open: false,
+                name: '',
+                previewName: ''
+            }
         };
     }
+
+    onChangeImgViewState = (open, name = '', previewName = '') => {
+        this.setState({
+            imgView: {
+                open,
+                name,
+                previewName
+            }
+        });
+    };
 
     onChangeViewModal = (name, value = true) => {
         this.setState({ [name]: value });
@@ -131,7 +148,12 @@ export default class Main extends Component {
             renameItem
         } = this.props;
 
-        const { editShow, createShow } = this.state;
+        const {
+            imgView: { open, name, previewName },
+            editShow,
+            createShow
+        } = this.state;
+
         const selectedItem = editItems.reduce(
             (accum, x) => (x.selected ? x : accum),
             {}
@@ -143,11 +165,25 @@ export default class Main extends Component {
             onClickBack: this.onClickBack,
             onCopyItems: this.onCopyItems,
             openEditor: this.onChangeViewModal,
-            onDeleteItem: this.onDeleteItem
+            onDeleteItem: this.onDeleteItem,
+            onChangeImgViewState: this.onChangeImgViewState
         };
 
         return (
             <div className="row">
+                {open && (
+                    <ImgView
+                        items={this.props[`${previewName}Items`]
+                            .filter(x => !x.ifFolder)
+                            .map(x =>
+                                R.assoc('url', itemSrc(x.path, 'preview'), x)
+                            )}
+                        activeIndex={this.props[
+                            `${previewName}Items`
+                        ].findIndex(x => x.name === name)}
+                        onSetModal={this.onChangeImgViewState}
+                    />
+                )}
                 {editShow && (
                     <ModalEdit
                         title="Редактирование элемента"
@@ -174,7 +210,7 @@ export default class Main extends Component {
                 <div className="col-md-6">
                     <Preview
                         data={viewItems}
-                        type="view"
+                        previewName="view"
                         {...params}
                         rootPathActive={view === ''}
                         editRootPathActive={edit === ''}
@@ -184,7 +220,7 @@ export default class Main extends Component {
                 <div className="col-md-6">
                     <Preview
                         data={editItems}
-                        type="edit"
+                        previewName="edit"
                         {...params}
                         rootPathActive={edit === ''}
                         folder={edit}

@@ -2,7 +2,7 @@ import React from 'react';
 import './buttons.scss';
 
 export default ({
-    type,
+    previewName,
     haveSelected,
     onOpenFolder,
     selectedItem,
@@ -11,7 +11,8 @@ export default ({
     editRootPathActive,
     onCopyItems,
     onDeleteItem,
-    openEditor
+    openEditor,
+    onChangeImgViewState
 }) => (
     <div className="btns">
         <button
@@ -20,13 +21,17 @@ export default ({
             className="btn btn-success"
             onClick={() => {
                 selectedItem.itFolder
-                    ? onOpenFolder(type, selectedItem.path)
-                    : false;
+                    ? onOpenFolder(previewName, selectedItem.path)
+                    : onChangeImgViewState(
+                        true,
+                        selectedItem.name,
+                        previewName
+                    );
             }}
         >
             Открыть
         </button>
-        {type === 'view' &&
+        {previewName === 'view' &&
             !rootPathActive &&
             !editRootPathActive && (
             <button
@@ -38,7 +43,7 @@ export default ({
                     Копировать
             </button>
         )}
-        {type === 'view' &&
+        {previewName === 'view' &&
             !rootPathActive &&
             !editRootPathActive && (
             <button
@@ -50,7 +55,7 @@ export default ({
                     Переместить
             </button>
         )}
-        {type === 'edit' &&
+        {previewName === 'edit' &&
             !rootPathActive && (
             <button
                 type="button"
@@ -61,7 +66,7 @@ export default ({
                     Переименовать
             </button>
         )}
-        {type === 'edit' &&
+        {previewName === 'edit' &&
             !rootPathActive && (
             <button
                 type="button"
@@ -72,7 +77,7 @@ export default ({
                 <i className="fa fa-plus" />
             </button>
         )}
-        {type === 'edit' &&
+        {previewName === 'edit' &&
             !rootPathActive && (
             <button
                 type="button"
@@ -87,7 +92,7 @@ export default ({
             <button
                 type="button"
                 className="btn btn-outline-secondary btns-btn__right"
-                onClick={() => onClickBack(type)}
+                onClick={() => onClickBack(previewName)}
             >
                 Назад
             </button>

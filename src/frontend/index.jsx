@@ -7,6 +7,7 @@ import createHistory from 'history/createBrowserHistory';
 import './styles/index.scss';
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
+
 import 'font-awesome/css/font-awesome.css';
 
 const history = createHistory();
