@@ -38,12 +38,12 @@ export default (state = initialState, action) => {
     case appConst.ITEMS_RECEIVE:
         return (
             R.assoc(
-                `${action.payload.itemName}Folder`,
+                `${action.payload.previewName}Folder`,
                 action.payload.folder,
                 state
             )
                 |> R.assoc(
-                    `${action.payload.itemName}Items`,
+                    `${action.payload.previewName}Items`,
                     action.payload.items
                 )
         );

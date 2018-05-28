@@ -39,10 +39,11 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         init: () => dispatch(initAciton()),
-        selectItem: (type, name) =>
-            dispatch(selectItemAction(`${type}Items`, name)),
-        openFolder: (type, folder) => dispatch(getItemsAction(type, folder)),
-        goRoot: type => dispatch(goRootAction(type)),
+        selectItem: (previewName, name) =>
+            dispatch(selectItemAction(`${previewName}Items`, name)),
+        openFolder: (previewName, folder) =>
+            dispatch(getItemsAction(previewName, folder)),
+        goRoot: previewName => dispatch(goRootAction(previewName)),
         copyItems: (files, folder) => dispatch(copyItemsAction(files, folder)),
         moveItems: (files, folder) => dispatch(moveItemsAction(files, folder)),
         createFolder: (folder, name) =>

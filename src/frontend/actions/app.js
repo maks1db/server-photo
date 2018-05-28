@@ -24,7 +24,7 @@ export const init = () => async dispatch => {
     });
 };
 
-export const getItems = (itemName, folder) => async dispatch => {
+export const getItems = (previewName, folder) => async dispatch => {
     dispatch({
         type: appConst.ITEMS_REQUEST
     });
@@ -34,16 +34,16 @@ export const getItems = (itemName, folder) => async dispatch => {
     dispatch({
         type: appConst.ITEMS_RECEIVE,
         payload: {
-            itemName,
+            previewName,
             folder,
             items: result.data.items
         }
     });
 };
 
-export const goRoot = itemName => ({
+export const goRoot = previewName => ({
     type: appConst.GO_ROOT,
-    payload: itemName
+    payload: previewName
 });
 
 export const copyItems = (files, folder) => async dispatch => {
