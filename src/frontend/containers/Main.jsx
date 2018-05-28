@@ -175,13 +175,13 @@ export default class Main extends Component {
                 {open && (
                     <ImgView
                         items={this.props[`${previewName}Items`]
-                            .filter(x => !x.ifFolder)
+                            .filter(x => !x.itFolder)
                             .map(x =>
                                 R.assoc('url', itemSrc(x.path, 'preview'), x)
                             )}
-                        activeIndex={this.props[
-                            `${previewName}Items`
-                        ].findIndex(x => x.name === name)}
+                        activeIndex={this.props[`${previewName}Items`]
+                            .filter(x => !x.itFolder)
+                            .findIndex(x => x.name === name)}
                         onSetModal={this.onChangeImgViewState}
                     />
                 )}
