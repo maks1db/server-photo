@@ -1,6 +1,6 @@
 {
     "name": "server-photo",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Работа с фотографиями на сервере",
     "main": "index.js",
     "scripts": {

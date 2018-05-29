@@ -25,7 +25,7 @@ const resolvers = {
                         name: x,
                         path,
                         itFolder: itFolder(path),
-                        dateCreate: stats.birthtime,
+                        dateCreate: stats.mtime,
                         size: toMB(stats.size)
                     };
                 })
@@ -39,7 +39,7 @@ const resolvers = {
                         name: key,
                         path: config.folders[key],
                         itFolder: true,
-                        dateCreate: stats.birthtime,
+                        dateCreate: stats.mtime,
                         size: toMB(stats.size)
                     },
                     accum
@@ -62,7 +62,7 @@ const resolvers = {
                 name,
                 path: result,
                 itFolder: true,
-                dateCreate: stats.birthtime,
+                dateCreate: stats.mtime,
                 size: toMB(stats.size)
             };
         },
@@ -84,7 +84,7 @@ const resolvers = {
                 name: name + type,
                 path: newFile,
                 itFolder: itFolder(newFile),
-                dateCreate: stats.birthtime,
+                dateCreate: stats.mtime,
                 size: toMB(stats.size)
             };
         },
@@ -110,7 +110,7 @@ const resolvers = {
                     name: path.basename(result),
                     path: result,
                     itFolder: itFolder(result),
-                    dateCreate: stats.birthtime,
+                    dateCreate: stats.mtime,
                     size: toMB(stats.size)
                 };
             });
@@ -137,7 +137,7 @@ const resolvers = {
                     name: path.basename(result),
                     path: result,
                     itFolder: itFolder(result),
-                    dateCreate: stats.birthtime,
+                    dateCreate: stats.mtime,
                     size: toMB(stats.size)
                 };
             });

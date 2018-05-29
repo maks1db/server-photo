@@ -3,4 +3,5 @@ git checkout master
 git pull
 npm i
 npm run build
+pm2 restart server-photo
 sudo systemctl reload nginx
