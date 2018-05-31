@@ -9,7 +9,10 @@ import {
     deleteItem as deleteItemAction,
     moveItems as moveItemsAction
 } from '../actions/app';
-import { selectItem as selectItemAction } from '../actions/item';
+import {
+    selectItem as selectItemAction,
+    disableSelect as disableSelectAction
+} from '../actions/item';
 import React, { Component } from 'react';
 import Preview from 'Render/Preview.jsx';
 import ModalEdit from 'Common/Modal.jsx';
@@ -41,19 +44,19 @@ function mapDispatchToProps(dispatch) {
         init: () => dispatch(initAciton()),
         selectItem: (previewName, name) =>
             dispatch(selectItemAction(`${previewName}Items`, name)),
-        openFolder: (previewName, folder) =>
-            dispatch(getItemsAction(previewName, folder)),
+        openFolder: (previewName, folder) => 
+            dispatch(getItemsAction(previewName, folder))
+
+        ,
         goRoot: previewName => dispatch(goRootAction(previewName)),
         copyItems: (files, folder) => dispatch(copyItemsAction(files, folder)),
         moveItems: (files, folder) => dispatch(moveItemsAction(files, folder)),
         createFolder: (folder, name) =>
             dispatch(createFolderAction(folder, name)),
-        renameItem: (file, name, oldName) => {
-            dispatch(renameItemAction(file, name, oldName));
-        },
-        deleteItem: file => {
-            dispatch(deleteItemAction(file));
-        }
+        renameItem: (file, name, oldName) =>
+            dispatch(renameItemAction(file, name, oldName)),
+        deleteItem: file => dispatch(deleteItemAction(file)),
+        disableSelect: previewName => dispatch(disableSelectAction(previewName))
     };
 }
 
@@ -73,6 +76,7 @@ export default class Main extends Component {
     }
 
     onChangeImgViewState = (open, name = '', previewName = '') => {
+        const { disableSelect} = this.props;
         this.setState({
             imgView: {
                 open,
@@ -80,6 +84,8 @@ export default class Main extends Component {
                 previewName
             }
         });
+
+        previewName && disableSelect(`${previewName}`);
     };
 
     onChangeViewModal = (name, value = true) => {

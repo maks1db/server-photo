@@ -8,6 +8,7 @@ const itFolder = require('../../helpers/models/itFolder');
 const itIMG = require('../../helpers/models/itIMG');
 const toMB = require('../../helpers/models/toMB');
 const copyItem = require('../../helpers/models/copyItem');
+const dateCreate = require('../../helpers/models/dateCreate');
 const sort = require('sort-by');
 
 const resolvers = {
@@ -25,7 +26,7 @@ const resolvers = {
                         name: x,
                         path,
                         itFolder: itFolder(path),
-                        dateCreate: stats.mtime,
+                        dateCreate: dateCreate(stats),
                         size: toMB(stats.size)
                     };
                 })
@@ -39,7 +40,7 @@ const resolvers = {
                         name: key,
                         path: config.folders[key],
                         itFolder: true,
-                        dateCreate: stats.mtime,
+                        dateCreate: dateCreate(stats),
                         size: toMB(stats.size)
                     },
                     accum
@@ -62,7 +63,7 @@ const resolvers = {
                 name,
                 path: result,
                 itFolder: true,
-                dateCreate: stats.mtime,
+                dateCreate: dateCreate(stats),
                 size: toMB(stats.size)
             };
         },
@@ -84,7 +85,7 @@ const resolvers = {
                 name: name + type,
                 path: newFile,
                 itFolder: itFolder(newFile),
-                dateCreate: stats.mtime,
+                dateCreate: dateCreate(stats),
                 size: toMB(stats.size)
             };
         },
@@ -110,7 +111,7 @@ const resolvers = {
                     name: path.basename(result),
                     path: result,
                     itFolder: itFolder(result),
-                    dateCreate: stats.mtime,
+                    dateCreate: dateCreate(stats),
                     size: toMB(stats.size)
                 };
             });
@@ -137,7 +138,7 @@ const resolvers = {
                     name: path.basename(result),
                     path: result,
                     itFolder: itFolder(result),
-                    dateCreate: stats.mtime,
+                    dateCreate: dateCreate(stats),
                     size: toMB(stats.size)
                 };
             });

@@ -1,0 +1,1 @@
+module.exports = stats => stats.mtime || stats.birthtime;
