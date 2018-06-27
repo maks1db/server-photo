@@ -8,7 +8,6 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = NODE_ENV === 'development';
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const R = require('ramda');
-const runIf = require('./src/helpers/logic/runIf');
 const polyfills = require('./build/polyfills');
 const analyzeBundle = false;
 const combineStyles = true;
@@ -56,11 +55,6 @@ const plugins = [
             DEV: isDevelopment
         }
     }),
-    new webpack.ProvidePlugin({
-        $: 'jquery/dist/jquery.min.js',
-        jQuery: 'jquery/dist/jquery.min.js',
-        'window.jQuery': 'jquery/dist/jquery.min.js'
-    }),
     !isDevelopment &&
         new ExtractTextPlugin('/css/styles.min.v.' + version + '.css'),
     isDevelopment && new webpack.NamedModulesPlugin(),
@@ -81,8 +75,7 @@ const minimizers = [
 ].filter(x => x !== false);
 
 const entry = R.compose(
-    runIf(true)(R.concat(polyfills)),
-    //runIf(isDevelopment)(R.concat(['react-hot-loader/patch'])),
+    R.concat(polyfills),
     R.concat([
         `./src/frontend/index${
             process.env.VIEW ? '.' + process.env.VIEW : ''
